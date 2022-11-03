@@ -4,7 +4,9 @@
     {
         static void Main(string[] args)
         {
-              
+            string[] lines = File.ReadAllLines("EntradaGPS .txt");
+
+
         }
     }
 }  
