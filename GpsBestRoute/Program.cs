@@ -6,7 +6,7 @@
         {
             string[] lines = File.ReadAllLines("EntradaGPS .txt");
 
-
+             
         }
     }
 }  
