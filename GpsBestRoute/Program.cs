@@ -12,6 +12,15 @@
                 {
                     Console.WriteLine(testCases);
 
+                    if (int.TryParse(lines[1], out int citiesQty))  
+                    {
+                        List<string> cities = lines[2].Split(' ').ToList();
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Quantidade de cidades inálida");
+                    }
                 }
                 else
                 {
