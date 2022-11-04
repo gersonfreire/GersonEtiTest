@@ -38,7 +38,14 @@
                 {
                     if ((int.TryParse(lines[testCaseCitiesQtyLine], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
                     {
-                        //List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
+                        string testCaseAllCities = lines[testCaseCitiesQtyLine + 1];
+                        List<string>? testCaseCitiesList = testCaseAllCities.Split(' ').ToList();
+
+                        testCasesList.Add(new TestCase()
+                        {
+                            allCities = testCaseCitiesList,
+                            //roadsList = LoadRoadsList(lines, testCaseCitiesQtyLine + 1)
+                        }); 
                     }
                     else
                     {
