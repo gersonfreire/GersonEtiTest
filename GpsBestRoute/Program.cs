@@ -30,11 +30,13 @@
         {
             try
             {
-                List<TestCase> testCasesList = new List<TestCase>();                
+                List<TestCase> testCasesList = new List<TestCase>();
+
+                int testCaseCitiesQtyLine = 1; 
 
                 for (int testCaseNumber = 0; testCaseNumber < testCaseQty; testCaseNumber++)
                 {
-                    if ((int.TryParse(lines[1], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
+                    if ((int.TryParse(lines[testCaseCitiesQtyLine], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
                     {
                         //List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
                     }
