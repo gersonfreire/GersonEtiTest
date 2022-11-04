@@ -14,6 +14,9 @@
                 if ((int.TryParse(lines[0], out int testCaseQty)) && (testCaseQty > 0))
                 {
                     List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
+
+                    // TODO: calculare best route
+                    ProcessTestCases(testCasesList);
                 }
                 else
                 {
@@ -51,7 +54,7 @@
                             int endCityLineNumber = roadsQtyLineIndex + roadsQty;
 
                             int testCaseLineIndex = roadsQtyLineIndex + roadsQty + 1;
-                            string testCaseLine = lines[testCaseLineIndex];
+                            string testCaseLine = lines[testCaseLineIndex ];
 
                             string startCity = testCaseLine.Trim().Split(' ')[0];
                             string endCity = testCaseLine.Trim().Split(' ')[1];
@@ -65,6 +68,8 @@
                                 startCity = startCity,
                                 endCity = endCity
                             });
+
+                            testCaseCitiesQtyLineIndex = firstRoadLineIndex + roadsQty + 1;
                         }
                         else
                         {
@@ -155,9 +160,40 @@
             }
         }
 
-        private static int CalcSmallestTimeTrip(string tripRoute, string tripStartCity, string tripEndCity)
+        private static void ProcessTestCases(List<TestCase> testCaseList)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (TestCase testCase in testCaseList)
+                {
+                    int smallestTime = CalculateSmallestTime(testCase);
+
+
+                    // TODO : print each time result
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        private static int CalculateSmallestTime(TestCase testCase)
+        {
+            try
+            {
+                int smallestTime = 0;
+
+                // TODO: calculate smallest time trip
+
+                return smallestTime;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 
