@@ -184,7 +184,6 @@
                 adjacencyMatrix[i] = new int[cities + 1];
             }
 
-            // Traverse flight[][]
             foreach (int[] item in roadsArray)
             {
                 // Create Adjacency Matrix
@@ -198,7 +197,7 @@
             return finalResult >= Int32.MaxValue ? -1 : finalResult;
         }
 
-        // Implement Depth First Traversal(or Search) algorithm
+        // Implement Depth First Search algorithm
         static int DeepFirstSearchAlgorithm(int currentNode, int stops, int distance, int cities)
         {
             // Best cenario cases (heuristic)
@@ -248,7 +247,7 @@
             return finalResult;
         }
 
-        // Covert roads list to suitable array in order to use it in algorithm
+        // Convert roads list to suitable array in order to use it in algorithm
         public static int[][] ConvertRoadsList(List<RoadData> roadsList, List<string> allCities)
         {
             var array2 = roadsList.ToArray();
@@ -269,14 +268,17 @@
             return roadsArray;
         }
 
-        public static int ProcessRoad(List<RoadData> roadsList, List<string> allCities)
+        public static int ProcessRoad(TestCase testCase, List<string> allCities)
         {
+            List<RoadData> roadsList = testCase.roadsList;
+
             int[][] roadsArray = ConvertRoadsList(roadsList, allCities);
 
-            int stops = 2;
-            int totalCities = 5;
-            int startCity = 0;
-            int endCity = 3;
+            int stops = 2; // stop each 2 cities along the trip
+            int totalCities = allCities.Count + 1;
+
+            int startCity = allCities.IndexOf(testCase.startCity);
+            int endCity = allCities.IndexOf(testCase.endCity);
 
             int minimalTripTime = FindSmallestPath(totalCities, roadsArray, startCity, endCity, stops);
 
@@ -295,7 +297,7 @@
 
                     foreach (TestCase testCase in testCasesList)
                     {
-                        int bestPathTime = ProcessRoad(testCase.roadsList, testCase.allCities);
+                        int bestPathTime = ProcessRoad(testCase, testCase.allCities);
 
                         testCase.smallestTripTime = bestPathTime;
 
