@@ -179,16 +179,21 @@
             }
         }
 
-        private static int CalculateSmallestTime(TestCase testCase)
+        private static int CalculateSmallestTime(TestCase testCase, int lastTripTime = 0)
         {
             try
             {
                 int smallestTime = 0;
 
-                // TODO: calculate smallest time trip
-                foreach (RoadData? road in testCase.roadsList)
+                if (testCase.roadsList != null)
                 {
-                    //int totalTimeTrip = road.
+                    // TODO: calculate smallest trip time
+
+                    // TODO: get all possible routes and trip times
+                    foreach (RoadData road in testCase.roadsList)
+                    {
+                        
+                    }
                 }
 
                 return smallestTime;
@@ -199,6 +204,7 @@
                 throw;
             }
         }
+
     }
 
     public class RoadData
