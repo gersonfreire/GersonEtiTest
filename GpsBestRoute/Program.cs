@@ -32,28 +32,28 @@
             {
                 List<TestCase> testCasesList = new List<TestCase>();
 
-                int testCaseCitiesQtyLineNumber = 1;
+                int testCaseCitiesQtyLineIndex = 1;
 
-                for (int testCaseNumber = 0; testCaseNumber < testCaseQty; testCaseNumber++)
+                for (int testCaseCounter = 0; testCaseCounter < testCaseQty; testCaseCounter++)
                 {
-                    if ((int.TryParse(lines[testCaseCitiesQtyLineNumber], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
+                    if ((int.TryParse(lines[testCaseCitiesQtyLineIndex], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
                     {
 
-                        int citiesLineNumber = testCaseCitiesQtyLineNumber + 1;
-                        string testCaseCitiesLine = lines[citiesLineNumber];
+                        int citiesLineIndex = testCaseCitiesQtyLineIndex + 1;
+                        string testCaseCitiesLine = lines[citiesLineIndex];
                         List<string>? testCaseCitiesList = testCaseCitiesLine.Split(' ').ToList();
 
-                        int roadsQtyLineNumber = citiesLineNumber + 1;
+                        int roadsQtyLineIndex = citiesLineIndex + 1;
 
-                        if ((int.TryParse(lines[roadsQtyLineNumber], out int roadsQty)) && (roadsQty > 0))
+                        if ((int.TryParse(lines[roadsQtyLineIndex], out int roadsQty)) && (roadsQty > 0))
                         {
-                            int startCityLineNumber = roadsQtyLineNumber + 1;
-                            int endCityLineNumber = roadsQtyLineNumber + roadsQty;
+                            int startCityLineNumber = roadsQtyLineIndex + 1;
+                            int endCityLineNumber = roadsQtyLineIndex + roadsQty;
 
                             testCasesList.Add(new TestCase()
                             {
                                 allCities = testCaseCitiesList,
-                                roadsList = LoadRoadsList(lines, roadsQty, roadsQtyLineNumber),
+                                roadsList = LoadRoadsList(lines, roadsQty, roadsQtyLineIndex),
                                 startCity = lines[startCityLineNumber],
                                 endCity = lines[endCityLineNumber]
                             });
@@ -80,13 +80,30 @@
             }
         }
 
-        private static List<RoadData> LoadRoadsList(string[] lines, int roadsQty, int roadsQtyLineNumber)
+        private static List<RoadData> LoadRoadsList(string[] lines, int roadsQty, int roadsQtyLineIndex)
         {
             try
             {
                 List<RoadData> roadsList = new List<RoadData>();
 
-                // TODO: get each road and add it to list 
+                // Get each road and add it to list 
+                for (int roadsCounter = 0; roadsCounter < roadsQty; roadsCounter++)
+                {
+                    int roadLineIndex = roadsQtyLineIndex + roadsCounter;
+                    string roadLine = lines[roadLineIndex];
+
+                    string[] roadData = roadLine.Split(' ');
+
+                    if ((roadData.Length > 2) && (int.TryParse(roadData[2], out int tripTime)))
+                    {
+                        RoadData newRoad = new RoadData()
+                        {
+                            startCity = roadData[0],
+                            endCity = roadData[0],
+                            tripTime = tripTime
+                        };
+                    }
+                }
 
                 return roadsList;
             }
