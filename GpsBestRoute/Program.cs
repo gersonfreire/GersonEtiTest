@@ -8,28 +8,42 @@
             {
                 string[] lines = File.ReadAllLines("EntradaGPS .txt");
 
-                if(int.TryParse(lines[0], out int testCases))
+                List<TestCase> testCasesList = LoadTestCases(lines);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private static List<TestCase> LoadTestCases(string[] lines)
+        {
+            try
+            {
+                List<TestCase> testCasesList = new List<TestCase>();
+
+                if (int.TryParse(lines[0], out int testCaseLine))
                 {
-                    Console.WriteLine(testCases);
+                    Console.WriteLine(testCaseLine);
 
-                    if (int.TryParse(lines[1], out int citiesQty))  
+                    TestCase newTestCase = new TestCase();
+
+                    if (int.TryParse(lines[1], out int citiesQty))
                     {
-                        List<string> cities = lines[2].Split(' ').ToList();
+                        List<string> allCities = lines[2].Split(' ').ToList();
+                        newTestCase.allCities = allCities;
 
-                        // TODO: Get roads quantity and each road data
+                        // Get quantity of roads and each road data
                         for (int i = 3; i < lines.Length; i++)
                         {
-                            if(int.TryParse(lines[i], out int roadsQty))
+                            if (int.TryParse(lines[i], out int roadsQty))
                             {
                                 for (int j = 1; j < roadsQty; j++)
                                 {
                                     string roadStartCity = lines[i + j];
                                     string roadEndCity = lines[i + j + 1];
-                                    if (int.TryParse(lines[i + j + 2], out int tripTime))
-                                    {
-                                        // TODO:
-                                    }
-                                    else
+                                    if (!int.TryParse(lines[i + j + 2], out int tripTime))
                                     {
                                         Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
                                         continue;
@@ -37,12 +51,14 @@
                                 }
 
                                 string tripRoute = lines[i + roadsQty + 1];
-                                if (tripRoute.Split(' ').Length > 1)    
+                                if (tripRoute.Split(' ').Length > 1)
                                 {
                                     string tripStartCity = tripRoute.Split(' ')[0];
                                     string tripEndCity = tripRoute.Split(' ')[1];
 
-                                    int smallestTimeTrip = CalcSmallestTimeTrip(tripRoute, tripStartCity, tripEndCity); 
+                                    int smallestTimeTrip = CalcSmallestTimeTrip(tripRoute, tripStartCity, tripEndCity);
+
+                                    testCasesList.Add(newTestCase);
                                 }
                                 else
                                 {
@@ -61,10 +77,13 @@
                 {
                     Console.WriteLine("Quantidade de casos de testes inálido");
                 }
+
+                return testCasesList;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                throw;
             }
         }
 
@@ -72,6 +91,22 @@
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class RoadData
+    {
+        public string? startCity;
+        public string? endCity;
+        public int tripTime;
+    }
+
+    public class TestCase
+    {
+        public List<string>? allCities;
+        public List<RoadData>? roadData;
+        public string? startCity;
+        public string? endCity;
+        public int smallestTripTime;
     }
 }
 
