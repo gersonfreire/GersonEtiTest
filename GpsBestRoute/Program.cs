@@ -38,20 +38,24 @@
                 {
                     if ((int.TryParse(lines[testCaseCitiesQtyLineNumber], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
                     {
-                        int citiesQtyLineNumber = testCaseCitiesQtyLineNumber + 1;
-                        string allCitiesLine = lines[citiesQtyLineNumber];
-                        List<string>? testCaseCitiesList = allCitiesLine.Split(' ').ToList();
 
-                        int roadsQtyLineNumber = citiesQtyLineNumber + 1;
+                        int citiesLineNumber = testCaseCitiesQtyLineNumber + 1;
+                        string testCaseCitiesLine = lines[citiesLineNumber];
+                        List<string>? testCaseCitiesList = testCaseCitiesLine.Split(' ').ToList();
+
+                        int roadsQtyLineNumber = citiesLineNumber + 1;
+
                         if ((int.TryParse(lines[roadsQtyLineNumber], out int roadsQty)) && (roadsQty > 0))
                         {
+                            int startCityLineNumber = roadsQtyLineNumber + 1;
+                            int endCityLineNumber = roadsQtyLineNumber + roadsQty;
 
                             testCasesList.Add(new TestCase()
                             {
                                 allCities = testCaseCitiesList,
-                                roadsList = LoadRoadsList(lines, roadsQtyLineNumber),
-                                startCity = "",
-                                endCity = ""
+                                roadsList = LoadRoadsList(lines, roadsQty, roadsQtyLineNumber),
+                                startCity = lines[startCityLineNumber],
+                                endCity = lines[endCityLineNumber]
                             });
                         }
                         else
@@ -76,9 +80,21 @@
             }
         }
 
-        private static List<RoadData> LoadRoadsList(string[] lines, int v)
+        private static List<RoadData> LoadRoadsList(string[] lines, int roadsQty, int roadsQtyLineNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<RoadData> roadsList = new List<RoadData>();
+
+                // TODO: get each road and add it to list 
+
+                return roadsList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
         private static List<RoadData> LoadRoadData(string[] lines, int roadsQty, int i)
