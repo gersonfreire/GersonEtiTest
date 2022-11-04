@@ -13,7 +13,7 @@
 
                 if ((int.TryParse(lines[0], out int testCaseQty)) && (testCaseQty > 0))
                 {
-                    List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);                 
+                    List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
                 }
                 else
                 {
@@ -32,88 +32,38 @@
             {
                 List<TestCase> testCasesList = new List<TestCase>();
 
-                int testCaseCitiesQtyLine = 1; 
+                int testCaseCitiesQtyLineNumber = 1;
 
                 for (int testCaseNumber = 0; testCaseNumber < testCaseQty; testCaseNumber++)
                 {
-                    if ((int.TryParse(lines[testCaseCitiesQtyLine], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
+                    if ((int.TryParse(lines[testCaseCitiesQtyLineNumber], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
                     {
-                        string testCaseAllCities = lines[testCaseCitiesQtyLine + 1];
-                        List<string>? testCaseCitiesList = testCaseAllCities.Split(' ').ToList();
+                        int citiesQtyLineNumber = testCaseCitiesQtyLineNumber + 1;
+                        string allCitiesLine = lines[citiesQtyLineNumber];
+                        List<string>? testCaseCitiesList = allCitiesLine.Split(' ').ToList();
 
-                        testCasesList.Add(new TestCase()
+                        int roadsQtyLineNumber = citiesQtyLineNumber + 1;
+                        if ((int.TryParse(lines[roadsQtyLineNumber], out int roadsQty)) && (roadsQty > 0))
                         {
-                            allCities = testCaseCitiesList,
-                            //roadsList = LoadRoadsList(lines, testCaseCitiesQtyLine + 1)
-                        }); 
+
+                            testCasesList.Add(new TestCase()
+                            {
+                                allCities = testCaseCitiesList,
+                                roadsList = LoadRoadsList(lines, roadsQtyLineNumber),
+                                startCity = "",
+                                endCity = ""
+                            });
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Erro no arquivo de entrada: Quantidade de estradas {testCaseCitiesQty} não é um inteiro positivo!");
+                            continue;
+                        }
                     }
                     else
                     {
                         Console.WriteLine($"Erro no arquivo de entrada: Quantidade de cidades {testCaseCitiesQty} não é um inteiro positivo!");
                         continue;
-                    }
-                }
-
-                //if (int.TryParse(lines[0], out int testCaseQty))
-                {
-                    Console.WriteLine(testCaseQty);
-
-                    if (int.TryParse(lines[1], out int allCitiesQty))
-                    {
-
-                        List<string> allCities = lines[2].Split(' ').ToList();
-
-                        TestCase newTestCase = new TestCase();
-                        newTestCase.allCities = allCities;
-
-                        // Get quantity of roads and each road data
-                        for (int i = 3; i < lines.Length; i++)
-                        {
-                            if (int.TryParse(lines[i], out int roadsQty))
-                            {
-                                newTestCase.roadsList = LoadRoadData(lines, roadsQty, i);
-
-                                //for (int j = 1; j < roadsQty; j++)
-                                //{
-                                //    string roadStartCity = lines[i + j];
-                                //    string roadEndCity = lines[i + j + 1];
-                                //    if (!int.TryParse(lines[i + j + 2], out int tripTime))
-                                //    {
-                                //        Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
-                                //        continue;
-                                //    }
-
-                                //    RoadData newRoadData = new RoadData()
-                                //    {
-                                //        startCity = roadStartCity,
-                                //        endCity = roadEndCity,
-                                //        tripTime = tripTime
-                                //    };
-
-                                //    newTestCase.roadsList?.Add(newRoadData);
-                                //}
-
-                                string tripRoute = lines[i + roadsQty + 1];
-                                if (tripRoute.Split(' ').Length > 1)
-                                {
-                                    string tripStartCity = tripRoute.Split(' ')[0];
-                                    string tripEndCity = tripRoute.Split(' ')[1];
-
-                                    int smallestTimeTrip = CalcSmallestTimeTrip(tripRoute, tripStartCity, tripEndCity);
-
-                                    testCasesList.Add(newTestCase);
-                                }
-                                else
-                                {
-                                    Console.WriteLine($"Erro na viagem: {tripRoute}");
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Quantidade de cidades inálida");
                     }
                 }
 
@@ -124,6 +74,11 @@
                 Console.WriteLine(ex);
                 throw;
             }
+        }
+
+        private static List<RoadData> LoadRoadsList(string[] lines, int v)
+        {
+            throw new NotImplementedException();
         }
 
         private static List<RoadData> LoadRoadData(string[] lines, int roadsQty, int i)
