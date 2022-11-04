@@ -104,12 +104,12 @@
 
                     if ((roadData.Length > 2) && (int.TryParse(roadData[2], out int tripTime)))
                     {
-                        RoadData newRoad = new RoadData()
+                        roadsList.Add(new RoadData()
                         {
                             startCity = roadData[0],
-                            endCity = roadData[0],
+                            endCity = roadData[1],
                             tripTime = tripTime
-                        };
+                        });
                     }
                 }
 
