@@ -186,6 +186,10 @@
                 int smallestTime = 0;
 
                 // TODO: calculate smallest time trip
+                foreach (RoadData? road in testCase.roadsList)
+                {
+                    //int totalTimeTrip = road.
+                }
 
                 return smallestTime;
             }
