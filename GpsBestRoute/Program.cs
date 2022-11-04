@@ -16,10 +16,40 @@
                     {
                         List<string> cities = lines[2].Split(' ').ToList();
 
-                        // TODO: Get roads data
+                        // TODO: Get roads quantity and each road data
                         for (int i = 3; i < lines.Length; i++)
                         {
+                            if(int.TryParse(lines[i], out int roadsQty))
+                            {
+                                for (int j = 1; j < roadsQty; j++)
+                                {
+                                    string roadStartCity = lines[i + j];
+                                    string roadEndCity = lines[i + j + 1];
+                                    if (int.TryParse(lines[i + j + 2], out int tripTime))
+                                    {
+                                        // TODO:
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
+                                        continue;
+                                    }
+                                }
 
+                                string tripRoute = lines[i + roadsQty + 1];
+                                if (tripRoute.Split(' ').Length > 1)    
+                                {
+                                    string tripStartCity = tripRoute.Split(' ')[0];
+                                    string tripEndCity = tripRoute.Split(' ')[1];
+
+                                    int smallestTimeTrip = CalcSmallestTimeTrip(tripRoute, tripStartCity, tripEndCity); 
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Erro na viagem: {tripRoute}");
+                                    continue;
+                                }
+                            }
                         }
                     }
                     else
@@ -36,6 +66,11 @@
             {
                 Console.WriteLine(ex);
             }
+        }
+
+        private static int CalcSmallestTimeTrip(string tripRoute, string tripStartCity, string tripEndCity)
+        {
+            throw new NotImplementedException();
         }
     }
 }
