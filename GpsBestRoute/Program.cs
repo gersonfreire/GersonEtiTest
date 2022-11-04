@@ -2,14 +2,23 @@
 {
     internal class Program
     {
+        List<TestCase> testCasesList = new List<TestCase>();
+        List<string> allCitiesList = new List<string>();
+
         static void Main(string[] args)
         {
             try
             {
-                string[] lines = File.ReadAllLines("EntradaGPS .txt");
+                string[] lines = File.ReadAllLines("EntradaGPS.txt");
 
-                List<TestCase> testCasesList = LoadTestCases(lines);
-
+                if ((int.TryParse(lines[0], out int testCaseQty)) && (testCaseQty > 0))
+                {
+                    List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);                 
+                }
+                else
+                {
+                    Console.WriteLine($"Erro no arquivo de entrada: Quantidade de casos de testes {testCaseQty} não é um inteiro positivo!");
+                }
             }
             catch (Exception ex)
             {
@@ -17,21 +26,35 @@
             }
         }
 
-        private static List<TestCase> LoadTestCases(string[] lines)
+        private static List<TestCase> LoadTestCases(string[] lines, int testCaseQty)
         {
             try
             {
-                List<TestCase> testCasesList = new List<TestCase>();
+                List<TestCase> testCasesList = new List<TestCase>();                
 
-                if (int.TryParse(lines[0], out int testCaseLine))
+                for (int testCaseNumber = 0; testCaseNumber < testCaseQty; testCaseNumber++)
                 {
-                    Console.WriteLine(testCaseLine);
-
-                    TestCase newTestCase = new TestCase();
-
-                    if (int.TryParse(lines[1], out int citiesQty))
+                    if ((int.TryParse(lines[1], out int testCaseCitiesQty)) && (testCaseCitiesQty > 0))
                     {
+                        //List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Erro no arquivo de entrada: Quantidade de cidades {testCaseCitiesQty} não é um inteiro positivo!");
+                        continue;
+                    }
+                }
+
+                //if (int.TryParse(lines[0], out int testCaseQty))
+                {
+                    Console.WriteLine(testCaseQty);
+
+                    if (int.TryParse(lines[1], out int allCitiesQty))
+                    {
+
                         List<string> allCities = lines[2].Split(' ').ToList();
+
+                        TestCase newTestCase = new TestCase();
                         newTestCase.allCities = allCities;
 
                         // Get quantity of roads and each road data
@@ -39,16 +62,27 @@
                         {
                             if (int.TryParse(lines[i], out int roadsQty))
                             {
-                                for (int j = 1; j < roadsQty; j++)
-                                {
-                                    string roadStartCity = lines[i + j];
-                                    string roadEndCity = lines[i + j + 1];
-                                    if (!int.TryParse(lines[i + j + 2], out int tripTime))
-                                    {
-                                        Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
-                                        continue;
-                                    }
-                                }
+                                newTestCase.roadsList = LoadRoadData(lines, roadsQty, i);
+
+                                //for (int j = 1; j < roadsQty; j++)
+                                //{
+                                //    string roadStartCity = lines[i + j];
+                                //    string roadEndCity = lines[i + j + 1];
+                                //    if (!int.TryParse(lines[i + j + 2], out int tripTime))
+                                //    {
+                                //        Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
+                                //        continue;
+                                //    }
+
+                                //    RoadData newRoadData = new RoadData()
+                                //    {
+                                //        startCity = roadStartCity,
+                                //        endCity = roadEndCity,
+                                //        tripTime = tripTime
+                                //    };
+
+                                //    newTestCase.roadsList?.Add(newRoadData);
+                                //}
 
                                 string tripRoute = lines[i + roadsQty + 1];
                                 if (tripRoute.Split(' ').Length > 1)
@@ -73,12 +107,41 @@
                         Console.WriteLine("Quantidade de cidades inálida");
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Quantidade de casos de testes inálido");
-                }
 
                 return testCasesList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
+        private static List<RoadData> LoadRoadData(string[] lines, int roadsQty, int i)
+        {
+            try
+            {
+                List<RoadData> roadsList = new List<RoadData>();
+
+                for (int j = 1; j < roadsQty; j++)
+                {
+                    string roadStartCity = lines[i + j];
+                    string roadEndCity = lines[i + j + 1];
+                    if (!int.TryParse(lines[i + j + 2], out int tripTime))
+                    {
+                        Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
+                        continue;
+                    }
+
+                    roadsList.Add(new RoadData()
+                    {
+                        startCity = roadStartCity,
+                        endCity = roadEndCity,
+                        tripTime = tripTime
+                    });
+                }
+
+                return roadsList;
             }
             catch (Exception ex)
             {
@@ -103,7 +166,7 @@
     public class TestCase
     {
         public List<string>? allCities;
-        public List<RoadData>? roadData;
+        public List<RoadData>? roadsList;
         public string? startCity;
         public string? endCity;
         public int smallestTripTime;
