@@ -5,6 +5,9 @@
         List<TestCase> testCasesList = new List<TestCase>();
         List<string> allCitiesList = new List<string>();
 
+        static int[][] adjacencyMatrix; 
+        static Dictionary<int[], int> map = new Dictionary<int[], int>();
+
         static void MainOri(string[] args)
         {
             try
@@ -127,39 +130,6 @@
             }
         }
 
-        private static List<RoadData> LoadRoadData(string[] lines, int roadsQty, int i)
-        {
-            try
-            {
-                List<RoadData> roadsList = new List<RoadData>();
-
-                for (int j = 1; j < roadsQty; j++)
-                {
-                    string roadStartCity = lines[i + j];
-                    string roadEndCity = lines[i + j + 1];
-                    if (!int.TryParse(lines[i + j + 2], out int tripTime))
-                    {
-                        Console.WriteLine($"Erro na rota: {lines[i + j + 2]}");
-                        continue;
-                    }
-
-                    roadsList.Add(new RoadData()
-                    {
-                        startCity = roadStartCity,
-                        endCity = roadEndCity,
-                        tripTime = tripTime
-                    });
-                }
-
-                return roadsList;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-
         private static void ProcessTestCases(List<TestCase> testCaseList)
         {
             try
@@ -205,37 +175,34 @@
             }
         }
 
-        static int[][] adjMatrix;
-        static Dictionary<int[], int> mp = new Dictionary<int[], int>();
-
-        static int FindSmallestPath(int cities, int[][] roads, int src, int dst, int stops)
+        static int FindSmallestPath(int cities, int[][] roadsArray, int startCity, int distance, int stops)
         {
             // Resize Adjacency Matrix
-            adjMatrix = new int[cities + 1][];
+            adjacencyMatrix = new int[cities + 1][];
             for (int i = 0; i <= cities; i++)
             {
-                adjMatrix[i] = new int[cities + 1];
+                adjacencyMatrix[i] = new int[cities + 1];
             }
 
             // Traverse flight[][]
-            foreach (int[] item in roads)
+            foreach (int[] item in roadsArray)
             {
                 // Create Adjacency Matrix
-                adjMatrix[item[0]][item[1]] = item[2];
+                adjacencyMatrix[item[0]][item[1]] = item[2];
             }
 
-            // DFS Call to find shortest path
-            int ans = DeepFirstSearchAlgorithm(src, stops, dst, cities);
+            // Algorithm to find shortest path
+            int finalResult = DeepFirstSearchAlgorithm(startCity, stops, distance, cities);
 
-            // Return the cost
-            return ans >= Int32.MaxValue ? -1 : ans;
+            // Return the traffic/weight
+            return finalResult >= Int32.MaxValue ? -1 : finalResult;
         }
 
         // Implement Depth First Traversal(or Search) algorithm
-        static int DeepFirstSearchAlgorithm(int node, int stops, int dst, int cities)
+        static int DeepFirstSearchAlgorithm(int currentNode, int stops, int distance, int cities)
         {
-            // Base Case
-            if (node == dst)
+            // Best cenario cases (heuristic)
+            if (currentNode == distance)
             {
                 return 0;
             }
@@ -245,67 +212,64 @@
                 return Int32.MaxValue;
             }
 
-            int[] key = new int[] { node, stops };
+            int[] key = new int[] { currentNode, stops };
 
-            // Find value with key in a map
-            if (mp.ContainsKey(key))
+            // Is this key already exists in memory map?
+            if (map.ContainsKey(key))
             {
-                return mp[key];
+                return map[key];
             }
 
-            int ans = Int32.MaxValue;
+            int finalResult = Int32.MaxValue;
 
-            // Traverse adjacency matrix of
-            // source node
+            // Loop though adjacency matrix (origin node)
             for (int neighbour = 0; neighbour < cities; ++neighbour)
             {
-                int weight = adjMatrix[node][neighbour];
+                int weight = adjacencyMatrix[currentNode][neighbour];
 
                 if (weight > 0)
                 {
-                    // Recursive call : child node
-                    int minVal = DeepFirstSearchAlgorithm(neighbour, stops - 1, dst, cities);
+                    // Recursively calls itself
+                    int minVal = DeepFirstSearchAlgorithm(neighbour, stops - 1, distance, cities);
 
                     if (minVal + weight > 0)
                     {
-                        ans = Math.Min(ans, minVal + weight);
+                        finalResult = Math.Min(finalResult, minVal + weight);
                     }
                 }
-                if (!mp.ContainsKey(key))
+                if (!map.ContainsKey(key))
                 {
-                    mp.Add(key, 0);
+                    map.Add(key, 0);
                 }
-                mp[key] = ans;
+                map[key] = finalResult;
             }
-            // Return ans
-            return ans;
+
+            // Return final result
+            return finalResult;
         }
 
         // Covert roads list to suitable array in order to use it in algorithm
-        public static int[][] ConvertRoadsList(List<List<string>> roadsList, List<string> allCities)
+        public static int[][] ConvertRoadsList(List<RoadData> roadsList, List<string> allCities)
         {
             var array2 = roadsList.ToArray();
             int[][] roadsArray = new int[array2.Length][];
 
             for (int i = 0; i < roadsList.Count; i++)
             {
-                int startCityIndex = allCities.IndexOf(roadsList[i][0]);
-                int endCityIndex = allCities.IndexOf(roadsList[i][1]);
-
-                string roadTraffic = roadsList[i][2];
-
-                int.TryParse(roadTraffic, out int roadTrafficInt);
+                int startCityIndex = allCities.IndexOf(roadsList[i].startCity);
+                int endCityIndex = allCities.IndexOf(roadsList[i].endCity);
+                int roadTraffic = roadsList[i].tripTime;
 
                 roadsArray[i] = new int[3];
                 roadsArray[i][0] = startCityIndex;
                 roadsArray[i][1] = endCityIndex;
-                roadsArray[i][2] = roadTrafficInt;
+                roadsArray[i][2] = roadTraffic;
             }
 
             return roadsArray;
         }
 
-        public static void ProcessRoad(List<List<string>> roadsList, List<string> allCities)
+        public static int ProcessRoad(List<RoadData> roadsList, List<string> allCities)
         {
             int[][] roadsArray = ConvertRoadsList(roadsList, allCities);
 
@@ -315,6 +279,8 @@
             int endCity = 3;
 
             int minimalTripTime = FindSmallestPath(totalCities, roadsArray, startCity, endCity, stops);
+
+            return minimalTripTime;
         }
 
         public static void Main(string[] args)
@@ -329,21 +295,12 @@
 
                     foreach (TestCase testCase in testCasesList)
                     {
-                        //List<string> allCities = new List<string>() { "z", "a", "b", "c" };
+                        int bestPathTime = ProcessRoad(testCase.roadsList, testCase.allCities);
 
-                        List<List<string>> roadsList = new List<List<string>>()
-                        {
-                            new List<string>() { "z", "a", "1"},
-                            new List<string>() { "z", "b", "2"},
-                            new List<string>() { "a", "c", "2"},
-                            new List<string>() { "b", "c", "1"},
-                        };
+                        testCase.smallestTripTime = bestPathTime;
 
-                        ProcessRoad(roadsList, testCase.allCities);
+                        Console.WriteLine($"O melhor tempo de viagem entre [{testCase.startCity}] e [{testCase.endCity}] é {testCase.smallestTripTime}!\n");
                     }
-
-                    // TODO: calculare best route
-                    //ProcessTestCases(testCasesList);
                 }
                 else
                 {
