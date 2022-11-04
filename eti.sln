@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotMovement", "BotMovement\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GpsBestRoute", "GpsBestRoute\GpsBestRoute.csproj", "{C6146B06-6A01-479E-B238-8D21FDC4F2A3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrimeNumber2", "PrimeNumber2\PrimeNumber2.csproj", "{4AAA663A-2FF1-41A4-9768-37DC171DF386}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeNumber", "PrimeNumber2\PrimeNumber.csproj", "{4AAA663A-2FF1-41A4-9768-37DC171DF386}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
