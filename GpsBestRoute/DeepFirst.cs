@@ -91,6 +91,18 @@ namespace GpsBestRoute
         // Driver code
         public static void Main(string[] args)
         {
+            List<string> allCities = new List<string>() { "z", "a", "b", "c" };
+
+            List<List<string>> roadsList = new List<List<string>>()
+            {
+                new List<string>() { "z", "a", "1"},
+                new List<string>() { "z", "b", "2"},
+                new List<string>() { "a", "c", "2"},
+                new List<string>() { "b", "c", "1"},
+            };
+            //int[,] roadsArray = convert(roadsList, allCities);
+            int[][] roadsArray = convert2(roadsList, allCities);
+
 
             // Input flight : :Source,
             // Destination, Cost
@@ -125,10 +137,58 @@ namespace GpsBestRoute
             int destCity = 3;// 1;// 4;
 
             // Function Call
-            int ans = findCheapestPrice(totalCities, flights, sourceCity, destCity, stops);
+            //int ans = findCheapestPrice(totalCities, flights, sourceCity, destCity, stops);
+            int ans = findCheapestPrice(totalCities, roadsArray, sourceCity, destCity, stops);
 
             Console.WriteLine(ans);
 
+        }
+
+        public static int[,] convert(List<List<string>> roadsList, List<string> allCities)
+        {
+            var array2 = roadsList.ToArray();
+            int[,] roadsArray = new int[array2.Length, 3];
+
+            //foreach (var item in roadsList)
+            for (int i = 0; i < roadsList.Count; i++)
+            {
+                int startCityIndex = allCities.IndexOf(roadsList[i][0]);
+                int endCityIndex = allCities.IndexOf(roadsList[i][1]);
+
+                string char3 = roadsList[i][2];
+
+                int.TryParse(char3, out int int3);
+
+                roadsArray.SetValue(startCityIndex, i, 0);
+                roadsArray.SetValue(endCityIndex, i, 1);
+                roadsArray.SetValue(int3, i, 2);
+            }
+
+            return roadsArray;
+        }
+
+        public static int[][] convert2(List<List<string>> roadsList, List<string> allCities)
+        {
+            var array2 = roadsList.ToArray();
+            int[][] roadsArray = new int[array2.Length][];
+
+            //foreach (var item in roadsList)
+            for (int i = 0; i < roadsList.Count; i++)
+            {
+                int startCityIndex = allCities.IndexOf(roadsList[i][0]);
+                int endCityIndex = allCities.IndexOf(roadsList[i][1]);
+
+                string roadTraffic = roadsList[i][2];
+
+                int.TryParse(roadTraffic, out int roadTrafficInt);
+
+                roadsArray[i] = new int[3];
+                roadsArray[i][0] = startCityIndex; 
+                roadsArray[i][1] = endCityIndex;
+                roadsArray[i][2] = roadTrafficInt;
+            }
+
+            return roadsArray;
         }
     }
 }
