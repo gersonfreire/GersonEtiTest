@@ -5,7 +5,7 @@
         List<TestCase> testCasesList = new List<TestCase>();
         List<string> allCitiesList = new List<string>();
 
-        static void Main(string[] args)
+        static void MainOri(string[] args)
         {
             try
             {
@@ -205,6 +205,156 @@
             }
         }
 
+        static int[][] adjMatrix;
+        static Dictionary<int[], int> mp = new Dictionary<int[], int>();
+
+        static int FindSmallestPath(int cities, int[][] roads, int src, int dst, int stops)
+        {
+            // Resize Adjacency Matrix
+            adjMatrix = new int[cities + 1][];
+            for (int i = 0; i <= cities; i++)
+            {
+                adjMatrix[i] = new int[cities + 1];
+            }
+
+            // Traverse flight[][]
+            foreach (int[] item in roads)
+            {
+                // Create Adjacency Matrix
+                adjMatrix[item[0]][item[1]] = item[2];
+            }
+
+            // DFS Call to find shortest path
+            int ans = DeepFirstSearchAlgorithm(src, stops, dst, cities);
+
+            // Return the cost
+            return ans >= Int32.MaxValue ? -1 : ans;
+        }
+
+        // Implement Depth First Traversal(or Search) algorithm
+        static int DeepFirstSearchAlgorithm(int node, int stops, int dst, int cities)
+        {
+            // Base Case
+            if (node == dst)
+            {
+                return 0;
+            }
+
+            if (stops < 0)
+            {
+                return Int32.MaxValue;
+            }
+
+            int[] key = new int[] { node, stops };
+
+            // Find value with key in a map
+            if (mp.ContainsKey(key))
+            {
+                return mp[key];
+            }
+
+            int ans = Int32.MaxValue;
+
+            // Traverse adjacency matrix of
+            // source node
+            for (int neighbour = 0; neighbour < cities; ++neighbour)
+            {
+                int weight = adjMatrix[node][neighbour];
+
+                if (weight > 0)
+                {
+                    // Recursive call : child node
+                    int minVal = DeepFirstSearchAlgorithm(neighbour, stops - 1, dst, cities);
+
+                    if (minVal + weight > 0)
+                    {
+                        ans = Math.Min(ans, minVal + weight);
+                    }
+                }
+                if (!mp.ContainsKey(key))
+                {
+                    mp.Add(key, 0);
+                }
+                mp[key] = ans;
+            }
+            // Return ans
+            return ans;
+        }
+
+        // Covert roads list to suitable array in order to use it in algorithm
+        public static int[][] ConvertRoadsList(List<List<string>> roadsList, List<string> allCities)
+        {
+            var array2 = roadsList.ToArray();
+            int[][] roadsArray = new int[array2.Length][];
+
+            for (int i = 0; i < roadsList.Count; i++)
+            {
+                int startCityIndex = allCities.IndexOf(roadsList[i][0]);
+                int endCityIndex = allCities.IndexOf(roadsList[i][1]);
+
+                string roadTraffic = roadsList[i][2];
+
+                int.TryParse(roadTraffic, out int roadTrafficInt);
+
+                roadsArray[i] = new int[3];
+                roadsArray[i][0] = startCityIndex;
+                roadsArray[i][1] = endCityIndex;
+                roadsArray[i][2] = roadTrafficInt;
+            }
+
+            return roadsArray;
+        }
+
+        public static void ProcessRoad(List<List<string>> roadsList, List<string> allCities)
+        {
+            int[][] roadsArray = ConvertRoadsList(roadsList, allCities);
+
+            int stops = 2;
+            int totalCities = 5;
+            int startCity = 0;
+            int endCity = 3;
+
+            int minimalTripTime = FindSmallestPath(totalCities, roadsArray, startCity, endCity, stops);
+        }
+
+        public static void Main(string[] args)
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines("EntradaGPS.txt");
+
+                if ((int.TryParse(lines[0], out int testCaseQty)) && (testCaseQty > 0))
+                {
+                    List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
+
+                    foreach (TestCase testCase in testCasesList)
+                    {
+                        //List<string> allCities = new List<string>() { "z", "a", "b", "c" };
+
+                        List<List<string>> roadsList = new List<List<string>>()
+                        {
+                            new List<string>() { "z", "a", "1"},
+                            new List<string>() { "z", "b", "2"},
+                            new List<string>() { "a", "c", "2"},
+                            new List<string>() { "b", "c", "1"},
+                        };
+
+                        ProcessRoad(roadsList, testCase.allCities);
+                    }
+
+                    // TODO: calculare best route
+                    //ProcessTestCases(testCasesList);
+                }
+                else
+                {
+                    Console.WriteLine($"Erro no arquivo de entrada: Quantidade de casos de testes {testCaseQty} não é um inteiro positivo!");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
     }
 
     public class RoadData
