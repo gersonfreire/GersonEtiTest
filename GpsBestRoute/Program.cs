@@ -2,35 +2,11 @@
 {
     internal class Program
     {
-        List<TestCase> testCasesList = new List<TestCase>();
-        List<string> allCitiesList = new List<string>();
+        List<TestCase> _testCasesList = new List<TestCase>();
+        List<string> _allCitiesList = new List<string>();
 
-        static int[][] adjacencyMatrix; 
-        static Dictionary<int[], int> map = new Dictionary<int[], int>();
-
-        static void MainOri(string[] args)
-        {
-            try
-            {
-                string[] lines = File.ReadAllLines("EntradaGPS.txt");
-
-                if ((int.TryParse(lines[0], out int testCaseQty)) && (testCaseQty > 0))
-                {
-                    List<TestCase> testCasesList = LoadTestCases(lines, testCaseQty);
-
-                    // TODO: calculare best route
-                    ProcessTestCases(testCasesList);
-                }
-                else
-                {
-                    Console.WriteLine($"Erro no arquivo de entrada: Quantidade de casos de testes {testCaseQty} não é um inteiro positivo!");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
+        static int[][] _adjacencyMatrix; 
+        static Dictionary<int[], int> _deepFirstAlgMap = new Dictionary<int[], int>();
 
         private static List<TestCase> LoadTestCases(string[] lines, int testCaseQty)
         {
@@ -130,64 +106,19 @@
             }
         }
 
-        private static void ProcessTestCases(List<TestCase> testCaseList)
-        {
-            try
-            {
-                foreach (TestCase testCase in testCaseList)
-                {
-                    int smallestTime = CalculateSmallestTime(testCase);
-
-
-                    // TODO : print each time result
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-        }
-
-        private static int CalculateSmallestTime(TestCase testCase, int lastTripTime = 0)
-        {
-            try
-            {
-                int smallestTime = 0;
-
-                if (testCase.roadsList != null)
-                {
-                    // TODO: calculate smallest trip time
-
-                    // TODO: get all possible routes and trip times
-                    foreach (RoadData road in testCase.roadsList)
-                    {
-                        
-                    }
-                }
-
-                return smallestTime;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-        }
-
         static int FindSmallestPath(int cities, int[][] roadsArray, int startCity, int distance, int stops)
         {
             // Resize Adjacency Matrix
-            adjacencyMatrix = new int[cities + 1][];
+            _adjacencyMatrix = new int[cities + 1][];
             for (int i = 0; i <= cities; i++)
             {
-                adjacencyMatrix[i] = new int[cities + 1];
+                _adjacencyMatrix[i] = new int[cities + 1];
             }
 
             foreach (int[] item in roadsArray)
             {
                 // Create Adjacency Matrix
-                adjacencyMatrix[item[0]][item[1]] = item[2];
+                _adjacencyMatrix[item[0]][item[1]] = item[2];
             }
 
             // Algorithm to find shortest path
@@ -214,9 +145,9 @@
             int[] key = new int[] { currentNode, stops };
 
             // Is this key already exists in memory map?
-            if (map.ContainsKey(key))
+            if (_deepFirstAlgMap.ContainsKey(key))
             {
-                return map[key];
+                return _deepFirstAlgMap[key];
             }
 
             int finalResult = Int32.MaxValue;
@@ -224,7 +155,7 @@
             // Loop though adjacency matrix (origin node)
             for (int neighbour = 0; neighbour < cities; ++neighbour)
             {
-                int weight = adjacencyMatrix[currentNode][neighbour];
+                int weight = _adjacencyMatrix[currentNode][neighbour];
 
                 if (weight > 0)
                 {
@@ -236,11 +167,11 @@
                         finalResult = Math.Min(finalResult, minVal + weight);
                     }
                 }
-                if (!map.ContainsKey(key))
+                if (!_deepFirstAlgMap.ContainsKey(key))
                 {
-                    map.Add(key, 0);
+                    _deepFirstAlgMap.Add(key, 0);
                 }
-                map[key] = finalResult;
+                _deepFirstAlgMap[key] = finalResult;
             }
 
             // Return final result
@@ -316,6 +247,7 @@
         }
     }
 
+    #region Data Model
     public class RoadData
     {
         public string? startCity;
@@ -330,11 +262,12 @@
         public string? startCity;
         public string? endCity;
         public int smallestTripTime;
-    }
+    } 
+    #endregion
 }
 
 
-#region Data structure
+#region Data entry structure and notes
 /*Entrada
  A entrada começa com uma linha contendo um inteiro T indicando o número de casos de teste. Para cada caso de teste, a entrada acontecerá da seguinte forma:
 
