@@ -41,7 +41,7 @@
 
                         int citiesLineIndex = testCaseCitiesQtyLineIndex + 1;
                         string testCaseCitiesLine = lines[citiesLineIndex];
-                        List<string>? testCaseCitiesList = testCaseCitiesLine.Split(' ').ToList();
+                        List<string>? testCaseCitiesList = testCaseCitiesLine.Trim().Split(' ').ToList();
 
                         int roadsQtyLineIndex = citiesLineIndex + 1;
 
@@ -50,12 +50,20 @@
                             int startCityLineNumber = roadsQtyLineIndex + 1;
                             int endCityLineNumber = roadsQtyLineIndex + roadsQty;
 
+                            int testCaseLineIndex = roadsQtyLineIndex + roadsQty + 1;
+                            string testCaseLine = lines[testCaseLineIndex];
+
+                            string startCity = testCaseLine.Trim().Split(' ')[0];
+                            string endCity = testCaseLine.Trim().Split(' ')[1];
+
+                            int firstRoadLineIndex = roadsQtyLineIndex + 1;
+
                             testCasesList.Add(new TestCase()
                             {
                                 allCities = testCaseCitiesList,
-                                roadsList = LoadRoadsList(lines, roadsQty, roadsQtyLineIndex),
-                                startCity = lines[startCityLineNumber],
-                                endCity = lines[endCityLineNumber]
+                                roadsList = LoadRoadsList(lines, roadsQty, firstRoadLineIndex),
+                                startCity = startCity,
+                                endCity = endCity
                             });
                         }
                         else
@@ -80,7 +88,7 @@
             }
         }
 
-        private static List<RoadData> LoadRoadsList(string[] lines, int roadsQty, int roadsQtyLineIndex)
+        private static List<RoadData> LoadRoadsList(string[] lines, int roadsQty, int firstRoadLineIndex)
         {
             try
             {
@@ -89,7 +97,7 @@
                 // Get each road and add it to list 
                 for (int roadsCounter = 0; roadsCounter < roadsQty; roadsCounter++)
                 {
-                    int roadLineIndex = roadsQtyLineIndex + roadsCounter;
+                    int roadLineIndex = firstRoadLineIndex + roadsCounter;
                     string roadLine = lines[roadLineIndex];
 
                     string[] roadData = roadLine.Split(' ');
